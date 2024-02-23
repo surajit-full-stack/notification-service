@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import moment from "moment";
 import { logger } from "./tools/color_console.js";
 dotenv.config();
-const url = `mongodb+srv://surajit27475:CWqiAkNelft4jTMD@cluster0.47vebgm.mongodb.net/notification_micro_service?retryWrites=true&w=majority`;
+const url = process.env.MONGO_URL;
 const notificationSchema = new mongoose.Schema({
   socketId: {
     type: String,
