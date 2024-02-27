@@ -94,7 +94,11 @@ if (cluster.isMaster) {
         }
       });
     });
-
+    socket.on("un-follow", ({ followingId, userId }) => {
+     
+      socket.leave(`base:${followingId}`);
+      console.log(`User left room: base:${followingId}`);
+    });
     socket.on("disconnect", () => {
       console.log("Client disconnected", socket.userId);
       socketIds.delete(socket.userId);
@@ -106,7 +110,8 @@ if (cluster.isMaster) {
     const notification = JSON.parse(message);
     const { dbkey } = notification;
     console.log("dbkey", dbkey);
-    console.log(notification.sourceUserId,'notification.sourceUserId')
+    
+    console.log(notification.sourceUserId, "notification.sourceUserId");
     if (channel === "notification:new") {
       if (!io.sockets.adapter.rooms.has(`base:${dbkey}`)) return;
       console.log("\n\nsending...\n\n");
@@ -116,7 +121,9 @@ if (cluster.isMaster) {
 
       notificationdb.addgroupNotification(`base:${dbkey}`, notification);
     } else {
-      const socket_id_author_of_post = socketIds.get(dbkey);
+     
+      const socket_id_author_of_post = socketIds.get(Number(dbkey));
+
       if (
         !io.sockets.sockets.has(socket_id_author_of_post) ||
         dbkey == notification.sourceUserId
